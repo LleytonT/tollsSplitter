@@ -14,24 +14,33 @@ import (
 
 func main() {
 
+}
+
+func check(err error) {
+	if err != nil {
+		log.Fatalf("fatal error: %s", err)
+	}
+}
+
+func getCoordinates(address string) (float64, float64) {
 	err := godotenv.Load(".env.local")
 	if err != nil {
-			log.Fatalf("Error loading .env file")
+		log.Fatalf("Error loading .env file")
 	}
 
 	// Get the API key from the environment variable
 	apiKey := os.Getenv("GOOGLE_MAPS_API_KEY")
 	if apiKey == "" {
-			log.Fatalf("API key not found in environment variables")
+		log.Fatalf("API key not found in environment variables")
 	}
 	c, err := maps.NewClient(maps.WithAPIKey(apiKey))
 	if err != nil {
-			log.Fatalf("fatal error: %s", err)
+		log.Fatalf("fatal error: %s", err)
 	}
 	r := &maps.GeocodingRequest{
-			Address: "",
-			Language: "en",
-			Region: "au",
+		Address:  "16 bunyip walkway",
+		Language: "en",
+		Region:   "au",
 	}
 
 	latlng := "-33.732,150.914"
@@ -54,10 +63,7 @@ func main() {
 	check(err)
 
 	pretty.Println(resp)
-}
-
-func check(err error) {
-	if err != nil {
-		log.Fatalf("fatal error: %s", err)
-	}
+	pretty.Println(resp[0].Geometry.Location.Lat)
+	pretty.Println(resp[0].Geometry.Location.Lng)
+	return resp[0].Geometry.Location.Lat, resp[0].Geometry.Location.Lng
 }
